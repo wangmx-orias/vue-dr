@@ -73,7 +73,7 @@
         次工程：{{item.nextP}}
         </div>
         <div>
-          <p class="input-balloon" v-show="isFocused" @click="closeBalloon">詳細：{{item.detail}}<br>納期：{{item.noki}}<br>処理：{{item.syori}}<br></p>
+          <p class="input-balloon" v-show="item.isFocused" @click="closeBalloon">詳細：{{item.detail}}<br>納期：{{item.noki}}<br>処理：{{item.syori}}<br></p>
           <div class="backdrop" v-show="isFocused" @click="closeBalloon"></div>
         </div>
         </div>
@@ -121,9 +121,9 @@
             <table cellpadding="0" width="97%" >
               <tbody>
                 <tr>
-                  <td width="70"><font size="+1"><b>2021年</b></font></td>
+                  <td width="70"><font size="+1"><b></b></font></td>
                   <td align="right"></td>
-                  <td align="middle" width="100"><font size="+1"><b>6月/1日</b></font></td>
+                  <td align="middle" width="200"><button @click="beforeDate">&lt; </button><font size="+1"><b>2021年5月26日</b></font><button @click="afterDate">&gt; </button></td>
                   <td></td>
                   <td width="70"></td>
                 </tr>
@@ -314,6 +314,7 @@ export default {
   },
   data () {
     return {
+      valueDate: '',
       vLine: [],
       hLine: [],
       isFocused: false,
@@ -338,6 +339,7 @@ export default {
         ki: '',
         startTime: '',
         endTime: '',
+        isFocused: false,
         position: {
           x: 0,
           y: 0,
@@ -348,6 +350,9 @@ export default {
       tasks: [
       ]
     }
+  },
+  mounted () {
+    this.valueDate = new Date()
   },
   methods: {
     // 辅助线回调事件
@@ -403,17 +408,21 @@ export default {
       this.inputIndex--
     },
     openBalloon () {
-      this.isFocused = true
+      if (this.tasks[this.inputIndex].isFocused === false) {
+        this.tasks[this.inputIndex].isFocused = true
+      } else {
+        this.tasks[this.inputIndex].isFocused = false
+      }
     },
     closeBalloon () {
-      this.isFocused = false
+      this.tasks[this.inputIndex].isFocused = false
     },
     openBalloon2 (e) {
       console.log(e.pageX + ',' + e.pageY)
-      if (e.pageX < 140 || e.pageX > 180) {
+      if (e.pageX < 10 || e.pageX > 100) {
         return
       }
-      if (e.pageY < 670 || e.pageY > 1010) {
+      if (e.pageY < 900 || e.pageY > 1300) {
         return
       }
       if (this.isFocused2 === true) {
@@ -429,6 +438,12 @@ export default {
     mousedown (index) {
       console.log('mousedown:' + index)
       this.inputIndex = index
+    },
+    beforeDate () {
+      this.valueDate = new Date(this.valueDate.setDate(this.valueDate.getDate() - 1))
+    },
+    afterDate () {
+      this.valueDate = new Date(this.valueDate.setDate(this.valueDate.getDate() + 1))
     }
   }
 }
@@ -539,8 +554,9 @@ export default {
     border: 1px dashed;
 }/*设置单元格边框横向虚线*/
 .btn-bg-img {
-  width: 20px;
-  height: 20px;
+  width: 22px;
+  height: 22px;
+  border: 0px;
   background-image: url('../static/images/detail.png');
 }
 .body{
